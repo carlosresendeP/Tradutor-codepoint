@@ -9,8 +9,29 @@ const Languages = [
   { code: 'pt', name: 'Português' },
 ]
 
+/*
+  LÓGICA DE PROGRAMAÇÃO
+  
+  [] Selecionar idiomas iniciais corretamente
+  [] Saber quando o usuário digitou algo no textarea
+  [] Reuinr as informações para enciar para o servidor
+      []Idioma atual
+      []idioma a ser tarduzido
+      []texto do idioma
+  [] ativar o loanding
+  [] mandar os dados para o servidor
+  [] desativar o loanding
+      [] ERRO - mostrar o erro na tela
+      [] Sucesso - mostrar texto traduzido  
+  [] inverter idiomas
+      [] reafazer busca de tardução
+
+
+
+*/
+
 function App() {
-  const [count, setCount] = useState(0)
+  
 
   return (
     <>
@@ -23,11 +44,11 @@ function App() {
 
         <div>
 
-          <main className='flex-grow flex items-start justify-center px-4 py-8'>
-            <div className='w-full max-w5xl bg-white rounded-lg shadow-md overflow-hidden'>
+          <main className='flex-grow flex items-start justify-center px-4 py-8 font-semibold'>
+            <div className='w-full max-w-5xl bg-white rounded-lg shadow-md overflow-hidden'>
               <div className='flex items-center justify-between p-4 border-b border-gray-200'>
 
-                <select name="" id="" className='text-sm text-textColor bg-transparent border-none focus:outline-none cursor-pointer'>
+                <select className='text-sm text-textColor bg-transparent border-none focus:outline-none cursor-pointer'>
                   {Languages.map((lang) => (
                     <option key={lang.code} value={lang.code}>
                       {lang.name}
@@ -64,13 +85,39 @@ function App() {
                 </select>
               </div>
 
+              <div className='grid grid-cols-1 md:grid-cols-2'>
+
+                <div className='p-4'>
+                  <textarea placeholder='Digite seu texto' className='w-full h-40 text-lg text-textColor bg-transparent resize-none border-none outline-none'>
+
+                  </textarea>
+                </div>
+
+                <div className='p-4 relative bg-secondaryBackgroud border-l border-gray-200'>
+                  <div className='absolute inset-0 flex items-center justify-center'> 
+                    <div className='animate-spin rounded-full h-8 w-8 border-t-2 border-blue-500'>
+
+                      <p className='text-lg text-textColor'>
+
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
 
 
 
-              
+
             </div>
           </main>
         </div>
+
+        <footer className='bg-white border-t border-gray-200 mt-auto'>
+            <div className='max-w-5xl mx-auto py-3 px-4 text-sm text-headerColor'>
+              &copy; {new Date().getFullYear()} Tradutor DevClub
+            </div>
+          </footer>
 
       </div>
     </>
