@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const Languages = [
   { code: 'en', name: 'Inglês' },
@@ -12,13 +12,13 @@ const Languages = [
 /*
   LÓGICA DE PROGRAMAÇÃO
   
-  [] Selecionar idiomas iniciais corretamente
-  [] Saber quando o usuário digitou algo no textarea
-  [] Reuinr as informações para enciar para o servidor
-      []Idioma atual
-      []idioma a ser tarduzido
-      []texto do idioma
-  [] ativar o loanding
+  [X] Selecionar idiomas iniciais corretamente
+  [x] Saber quando o usuário digitou algo no textarea
+  [x] Reuinr as informações para enviar para o servidor
+      [x]Idioma atual
+      [x]idioma a ser tarduzido
+      [x]texto do idioma
+  [x] ativar o loanding
   [] mandar os dados para o servidor
   [] desativar o loanding
       [] ERRO - mostrar o erro na tela
@@ -31,14 +31,31 @@ const Languages = [
 */
 
 function App() {
-  
+  const [sourceLang, setSourceLang] = useState('pt') //inicial
+  const [TargetLang, setTargetLang] = useState('en') //alvo
+  const [sourceText, setSourceText] = useState('') //Texto de origem
+  const [isLoading, setIsLoading] = useState(false) //carregamento da animação
+
+
+  //efeito colateral toda vez que ele roda chama a função
+  useEffect(() => {
+    //lingua de origem -sourceLang,
+    //lingua que será traduzido -TargeteLang
+    //do texto para traduzir - sourceText
+    handleTranslate()
+  }, [sourceText])
+
+  const handleTranslate = () =>{
+    `https://api.mymemory.translated.net/get?q=Hello World!&langpair=en|it`
+  }
+
 
   return (
     <>
       <div className='min-h-screen bg-background flex flex-col'>
         <header className='bg-white shadow-sm'>
           <div className='max-w-5xl mx-auto px-4 py-3 flex items-center'>
-            <h1 className='text-headerColor text-2xl  font-normal'>Tradutor DevClub</h1>
+            <h1 className='text-headerColor text-2xl  font-normal'>Tradutor CodePoint</h1>
           </div>
         </header>
 
@@ -48,10 +65,12 @@ function App() {
             <div className='w-full max-w-5xl bg-white rounded-lg shadow-md overflow-hidden'>
               <div className='flex items-center justify-between p-4 border-b border-gray-200'>
 
-                <select className='text-sm text-textColor bg-transparent border-none focus:outline-none cursor-pointer'>
+                <select value={sourceLang} onChange={event => setSourceLang(event.target.value)} className='text-sm text-textColor bg-transparent border-none focus:outline-none cursor-pointer'>
+
                   {Languages.map((lang) => (
                     <option key={lang.code} value={lang.code}>
                       {lang.name}
+
                     </option>
 
                   ))}
@@ -75,7 +94,7 @@ function App() {
                   </svg>
                 </button>
 
-                <select name="" id="" className='text-sm text-textColor bg-transparent border-none focus:outline-none cursor-pointer'>
+                <select value={TargetLang} onChange={event => setTargetLang(event.target.value)} className='text-sm text-textColor bg-transparent border-none focus:outline-none cursor-pointer'>
                   {Languages.map((lang) => (
                     <option key={lang.code} value={lang.code}>
                       {lang.name}
@@ -85,22 +104,31 @@ function App() {
                 </select>
               </div>
 
+
+
               <div className='grid grid-cols-1 md:grid-cols-2'>
 
                 <div className='p-4'>
-                  <textarea placeholder='Digite seu texto' className='w-full h-40 text-lg text-textColor bg-transparent resize-none border-none outline-none'>
+                  <textarea
+                    value={sourceText}
+                    onChange={event => setSourceText(event.target.value)}
+                    placeholder='Digite seu texto'
+                    className='w-full h-40 text-lg text-textColor bg-transparent resize-none border-none outline-none'>
 
                   </textarea>
                 </div>
 
                 <div className='p-4 relative bg-secondaryBackgroud border-l border-gray-200'>
-                  <div className='absolute inset-0 flex items-center justify-center'> 
-                    <div className='animate-spin rounded-full h-8 w-8 border-t-2 border-blue-500'>
+                  <div className='absolute inset-0 flex items-center justify-center'>
 
-                      <p className='text-lg text-textColor'>
+                    { //if ou else
+                      isLoading ? 
+                      (<div className='animate-spin rounded-full h-8 w-8 border-t-2 border-blue-500'></div>)
+                      : 
+                      (<p className='text-lg text-textColor'></p>)
+                    }
 
-                      </p>
-                    </div>
+
                   </div>
                 </div>
 
@@ -114,10 +142,10 @@ function App() {
         </div>
 
         <footer className='bg-white border-t border-gray-200 mt-auto'>
-            <div className='max-w-5xl mx-auto py-3 px-4 text-sm text-headerColor'>
-              &copy; {new Date().getFullYear()} Tradutor DevClub
-            </div>
-          </footer>
+          <div className='max-w-5xl mx-auto py-3 px-4 text-sm text-headerColor'>
+            &copy; {new Date().getFullYear()} Tradutor DevClub
+          </div>
+        </footer>
 
       </div>
     </>
