@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 
+
 const Languages = [
   { code: 'en', name: 'Inglês' },
   { code: 'es', name: 'Espanhou' },
@@ -19,12 +20,12 @@ const Languages = [
       [x]idioma a ser tarduzido
       [x]texto do idioma
   [x] ativar o loanding
-  [] mandar os dados para o servidor
-  [] desativar o loanding
-      [] ERRO - mostrar o erro na tela
-      [] Sucesso - mostrar texto traduzido  
-  [] inverter idiomas
-      [] reafazer busca de tardução
+  [x] mandar os dados para o servidor
+  [x] desativar o loanding
+      [x] ERRO - mostrar o erro na tela
+      [x] Sucesso - mostrar texto traduzido  
+  [x] inverter idiomas
+      [x] reafazer busca de tradução
 
 
 
@@ -35,6 +36,8 @@ function App() {
   const [TargetLang, setTargetLang] = useState('en') //alvo
   const [sourceText, setSourceText] = useState('') //Texto de origem
   const [isLoading, setIsLoading] = useState(false) //carregamento da animação
+  const [traslatedText, setTraslatedText] = useState("") //tradução
+  const [error, setError] = useState("") //erro
 
 
   //efeito colateral toda vez que ele roda chama a função
@@ -42,11 +45,56 @@ function App() {
     //lingua de origem -sourceLang,
     //lingua que será traduzido -TargeteLang
     //do texto para traduzir - sourceText
-    handleTranslate()
-  }, [sourceText])
 
-  const handleTranslate = () =>{
-    `https://api.mymemory.translated.net/get?q=Hello World!&langpair=en|it`
+    if (sourceText) {
+      const delay = setTimeout(() => {
+        handleTranslate()
+      }, 300);
+
+      return () => clearTimeout(delay)
+    }
+
+  }, [sourceText, TargetLang, sourceLang])
+
+
+
+  const handleTranslate = async () => {
+    //https://mymemory.translated.net/
+
+    try {
+
+      setIsLoading(true)
+      setError('')
+      const response = await fetch(`https://api.mymemory.translated.net/get?q=${sourceText}!&langpair=${sourceLang}|${TargetLang}`)
+
+      if (!response.ok) {
+        throw new Error(`HTTP ERROR: ${response.status}`)
+
+      }
+      //dentro de responseData vai ter o translatedText
+      const data = await response.json()
+      //console.log(data)
+      setTraslatedText(data.responseData.translatedText)
+
+    } catch (err) {
+      setError(`erro ao executar a tradução:${err.message}. Tente Novamente!`)
+
+    } finally {
+      setIsLoading(false)
+    }
+
+
+
+  }
+
+
+  //botão de troca
+  //inverssão de valores do set
+  const swapTranslate = () => {
+    setSourceLang(TargetLang)
+    setTargetLang(sourceLang)
+    setSourceText(traslatedText)
+    setTraslatedText(sourceText)
   }
 
 
@@ -76,7 +124,7 @@ function App() {
                   ))}
                 </select>
 
-                <button className='p-2 rounder-full hover:bg-gray-100 outline-none rounded-sm'>
+                <button className='p-2 rounder-full hover:bg-gray-100 outline-none rounded-sm' onClick={swapTranslate}>
                   <svg
 
                     className="w-5 h-5 text-headerColor"
@@ -119,22 +167,30 @@ function App() {
                 </div>
 
                 <div className='p-4 relative bg-secondaryBackgroud border-l border-gray-200'>
-                  <div className='absolute inset-0 flex items-center justify-center'>
 
-                    { //if ou else
-                      isLoading ? 
-                      (<div className='animate-spin rounded-full h-8 w-8 border-t-2 border-blue-500'></div>)
-                      : 
-                      (<p className='text-lg text-textColor'></p>)
-                    }
+                  {isLoading ? (
+                    <div className='absolute inset-0 flex items-center justify-center'>
 
+                      <div className='animate-spin rounded-full h-8 w-8 border-t-2 border-blue-500'></div>
 
-                  </div>
+                    </div>
+
+                  ) : (
+                    <p className='text-lg text-textColor'>{traslatedText}</p>
+                  )
+                  }
+
                 </div>
-
               </div>
 
 
+              {error && (
+                <div className='p-4 bg-red-100 border-t border-red-400 text-red-700'>
+
+                  {error}
+
+                </div>
+              )}
 
 
             </div>
@@ -143,7 +199,7 @@ function App() {
 
         <footer className='bg-white border-t border-gray-200 mt-auto'>
           <div className='max-w-5xl mx-auto py-3 px-4 text-sm text-headerColor'>
-            &copy; {new Date().getFullYear()} Tradutor DevClub
+            &copy; {new Date().getFullYear()} Tradutor CodePoint
           </div>
         </footer>
 
